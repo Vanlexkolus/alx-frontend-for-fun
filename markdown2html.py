@@ -1,21 +1,22 @@
 #!/usr/bin/python3
 """
-markdown2html.py - Converts a Markdown file to HTML.
+markdown2html.py - Converts a Markdown file to HTML, supporting
+heading syntax.
 
 Usage:
     ./markdown2html.py README.md README.html
 
 If the number of arguments is less than 2:
-    print "Usage: ./markdown2html.py README.md README.html"
-    to STDERR and exit with status 1.
+    print "Usage: ./markdown2html.py README.md README.html" to
+    STDERR and exit with status 1.
 If the Markdown file doesn’t exist:
     print "Missing <filename>" to STDERR and exit with status 1.
-Otherwise, converts the Markdown file to HTML and writes it to the output file.
+Otherwise, converts the Markdown file to HTML and writes it to the
+output file.
 """
 
 import sys
 import os
-import markdown
 
 
 def print_usage():
@@ -28,6 +29,28 @@ def print_missing(filename):
     print(f"Missing {filename}", file=sys.stderr)
 
 
+def parse_markdown(md_content):
+    """Parses Markdown content and converts it to HTML.
+
+    Args:
+        md_content (str): The content of the Markdown file.
+
+    Returns:
+        str: The converted HTML content.
+    """
+    html_lines = []
+    for line in md_content.splitlines():
+        line = line.strip()
+        if line.startswith('#'):
+            heading_level = len(line.split(' ')[0])
+            heading_text = line[heading_level:].strip()
+            html_line = f'<h{heading_level}>{heading_text}</h{heading_level}>'
+            html_lines.append(html_line)
+        else:
+            html_lines.append(line)
+    return '\n'.join(html_lines)
+
+
 def markdown_to_html(md_filename, html_filename):
     """Converts a Markdown file to HTML and writes it to an output file.
 
@@ -38,7 +61,7 @@ def markdown_to_html(md_filename, html_filename):
     with open(md_filename, 'r') as md_file:
         md_content = md_file.read()
 
-    html_content = markdown.markdown(md_content)
+    html_content = parse_markdown(md_content)
 
     with open(html_filename, 'w') as html_file:
         html_file.write(html_content)
