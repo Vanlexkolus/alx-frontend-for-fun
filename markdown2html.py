@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """
 markdown2html.py - Converts a Markdown file to HTML,
-supporting heading and ordered/unordered list syntax.
+supporting heading, ordered/unordered list, and paragraph syntax.
 
 Usage:
     ./markdown2html.py README.md README.html
@@ -11,8 +11,8 @@ If the number of arguments is less than 2:
     to STDERR and exit with status 1.
 If the Markdown file doesn’t exist:
     print "Missing <filename>" to STDERR and exit with status 1.
-Otherwise, converts the Markdown file to HTML and writes it
-to the output file.
+Otherwise, converts the Markdown file to HTML and writes
+it to the output file.
 """
 
 import sys
@@ -41,10 +41,21 @@ def parse_markdown(md_content):
     html_lines = []
     in_unordered_list = False
     in_ordered_list = False
+    in_paragraph = False
+    paragraph_lines = []
+
+    def close_paragraph():
+        """Helper function to close a paragraph and add it to html_lines."""
+        if paragraph_lines:
+            html_lines.append("<p>")
+            html_lines.append("<br/>".join(paragraph_lines))
+            html_lines.append("</p>")
+            paragraph_lines.clear()
 
     for line in md_content.splitlines():
         line = line.strip()
         if line.startswith('#'):
+            close_paragraph()
             if in_unordered_list:
                 html_lines.append('</ul>')
                 in_unordered_list = False
@@ -56,6 +67,7 @@ def parse_markdown(md_content):
             html_line = f'<h{heading_level}>{heading_text}</h{heading_level}>'
             html_lines.append(html_line)
         elif line.startswith('-'):
+            close_paragraph()
             if not in_unordered_list:
                 html_lines.append('<ul>')
                 in_unordered_list = True
@@ -63,6 +75,7 @@ def parse_markdown(md_content):
             html_line = f'<li>{list_item_text}</li>'
             html_lines.append(html_line)
         elif line.startswith('*'):
+            close_paragraph()
             if not in_ordered_list:
                 html_lines.append('<ol>')
                 in_ordered_list = True
@@ -76,11 +89,18 @@ def parse_markdown(md_content):
             if in_ordered_list:
                 html_lines.append('</ol>')
                 in_ordered_list = False
-            html_lines.append(line)
+            if line:  # If the line is not empty
+                paragraph_lines.append(line)
+            else:  # Empty line indicates the end of a paragraph
+                close_paragraph()
+
+    # Close any open paragraph, unordered list, or ordered list at the end of the file
+    close_paragraph()
     if in_unordered_list:
         html_lines.append('</ul>')
     if in_ordered_list:
         html_lines.append('</ol>')
+
     return '\n'.join(html_lines)
 
 
@@ -101,7 +121,7 @@ def markdown_to_html(md_filename, html_filename):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 3:
         print_usage()
         sys.exit(1)
 
