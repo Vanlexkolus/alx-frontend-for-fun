@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """
 markdown2html.py - Converts a Markdown file to HTML, supporting
-heading syntax.
+heading and unordered list syntax.
 
 Usage:
     ./markdown2html.py README.md README.html
@@ -11,8 +11,8 @@ If the number of arguments is less than 2:
     STDERR and exit with status 1.
 If the Markdown file doesn’t exist:
     print "Missing <filename>" to STDERR and exit with status 1.
-Otherwise, converts the Markdown file to HTML and writes it to the
-output file.
+Otherwise, converts the Markdown file to HTML and writes it to
+the output file.
 """
 
 import sys
@@ -39,15 +39,31 @@ def parse_markdown(md_content):
         str: The converted HTML content.
     """
     html_lines = []
+    in_list = False
     for line in md_content.splitlines():
         line = line.strip()
         if line.startswith('#'):
+            if in_list:
+                html_lines.append('</ul>')
+                in_list = False
             heading_level = len(line.split(' ')[0])
             heading_text = line[heading_level:].strip()
             html_line = f'<h{heading_level}>{heading_text}</h{heading_level}>'
             html_lines.append(html_line)
+        elif line.startswith('-'):
+            if not in_list:
+                html_lines.append('<ul>')
+                in_list = True
+            list_item_text = line[1:].strip()
+            html_line = f'<li>{list_item_text}</li>'
+            html_lines.append(html_line)
         else:
+            if in_list:
+                html_lines.append('</ul>')
+                in_list = False
             html_lines.append(line)
+    if in_list:
+        html_lines.append('</ul>')
     return '\n'.join(html_lines)
 
 
