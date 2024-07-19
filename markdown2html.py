@@ -1,22 +1,22 @@
 #!/usr/bin/python3
 """
-markdown2html.py - Converts a Markdown file to HTML,
-supporting heading, ordered/unordered list, and paragraph syntax.
+markdown2html.py - Converts a Markdown file to HTML, supporting heading,
+ordered/unordered list, paragraph, and bold syntax.
 
 Usage:
     ./markdown2html.py README.md README.html
 
 If the number of arguments is less than 2:
-    print "Usage: ./markdown2html.py README.md README.html"
-    to STDERR and exit with status 1.
+    print "Usage: ./markdown2html.py README.md README.html" to STDERR
+    and exit with status 1.
 If the Markdown file doesn’t exist:
     print "Missing <filename>" to STDERR and exit with status 1.
-Otherwise, converts the Markdown file to HTML and writes
-it to the output file.
+Otherwise, converts the Markdown file to HTML and writes it to the output file.
 """
 
 import sys
 import os
+import re
 
 
 def print_usage():
@@ -41,7 +41,6 @@ def parse_markdown(md_content):
     html_lines = []
     in_unordered_list = False
     in_ordered_list = False
-    in_paragraph = False
     paragraph_lines = []
 
     def close_paragraph():
@@ -52,8 +51,15 @@ def parse_markdown(md_content):
             html_lines.append("</p>")
             paragraph_lines.clear()
 
+    def apply_text_styles(text):
+        """Apply text styles for bold and italic."""
+        text = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', text)
+        text = re.sub(r'__(.*?)__', r'<em>\1</em>', text)
+        return text
+
     for line in md_content.splitlines():
         line = line.strip()
+        line = apply_text_styles(line)
         if line.startswith('#'):
             close_paragraph()
             if in_unordered_list:
@@ -94,7 +100,8 @@ def parse_markdown(md_content):
             else:  # Empty line indicates the end of a paragraph
                 close_paragraph()
 
-    # Close any open paragraph, unordered list, or ordered list at the end of the file
+    # Close any open paragraph, unordered list,
+    # or ordered list at the end of the file
     close_paragraph()
     if in_unordered_list:
         html_lines.append('</ul>')
