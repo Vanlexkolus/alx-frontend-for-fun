@@ -1,22 +1,24 @@
 #!/usr/bin/python3
 """
 markdown2html.py - Converts a Markdown file to HTML, supporting heading,
-ordered/unordered list, paragraph, and bold syntax.
+ordered/unordered list, paragraph, bold, and custom syntax.
 
 Usage:
     ./markdown2html.py README.md README.html
 
 If the number of arguments is less than 2:
-    print "Usage: ./markdown2html.py README.md README.html" to STDERR
-    and exit with status 1.
+    print "Usage: ./markdown2html.py README.md README.html"
+    to STDERR and exit with status 1.
 If the Markdown file doesn’t exist:
     print "Missing <filename>" to STDERR and exit with status 1.
-Otherwise, converts the Markdown file to HTML and writes it to the output file.
+Otherwise, converts the Markdown file to HTML and writes
+it to the output file.
 """
 
 import sys
 import os
 import re
+import hashlib
 
 
 def print_usage():
@@ -27,6 +29,16 @@ def print_usage():
 def print_missing(filename):
     """Prints a missing file message to STDERR."""
     print(f"Missing {filename}", file=sys.stderr)
+
+
+def md5(content):
+    """Convert content to MD5 hash."""
+    return hashlib.md5(content.encode()).hexdigest()
+
+
+def remove_c(content):
+    """Remove all 'c' (case insensitive) from content."""
+    return re.sub(r'c', '', content, flags=re.IGNORECASE)
 
 
 def parse_markdown(md_content):
@@ -57,8 +69,15 @@ def parse_markdown(md_content):
         text = re.sub(r'__(.*?)__', r'<em>\1</em>', text)
         return text
 
+    def apply_custom_syntax(text):
+        """Apply custom syntax transformations."""
+        text = re.sub(r'\[\[(.*?)\]\]', lambda m: md5(m.group(1)), text)
+        text = re.sub(r'\(\((.*?)\)\)', lambda m: remove_c(m.group(1)), text)
+        return text
+
     for line in md_content.splitlines():
         line = line.strip()
+        line = apply_custom_syntax(line)
         line = apply_text_styles(line)
         if line.startswith('#'):
             close_paragraph()
