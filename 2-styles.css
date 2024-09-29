@@ -1,0 +1,68 @@
+/* Hide the default checkbox */
+.toggle-cb {
+    display: none;
+  }
+  
+  /* Toggle label styles */
+  .toggle-label {
+    display: inline-block;
+    position: relative;
+    width: 80px;  /* Adjust to fit your layout */
+    height: 40px; /* Adjust to fit your layout */
+    background-color: #ddd;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  /* Toggle inner (Yes/No background) */
+  .toggle-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ddd;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #888;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  }
+  
+  /* Toggle switch circle */
+  .toggle-switch {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 30px;
+    height: 30px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* When checkbox is checked */
+  .toggle-cb:checked + .toggle-label .toggle-inner {
+    background-color: #e60042;
+    color: white;
+  }
+  
+  .toggle-cb:checked + .toggle-label .toggle-switch {
+    transform: translateX(40px); /* Moves the switch circle to the right */
+  }
+  
+  /* Checked state text */
+  .toggle-cb:checked + .toggle-label .toggle-inner::before {
+    content: "Yes";
+  }
+  
+  /* Unchecked state text */
+  .toggle-cb:not(:checked) + .toggle-label .toggle-inner::before {
+    content: "No";
+  }
+  
