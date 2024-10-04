@@ -1,10 +1,10 @@
 // 6-nested_hover.scss
 
 button {
-    color: #FF0000;
+    color: #FF0000;  // Default text color for button
   
     &:hover {
-      color: #00FF00;
+      color: #00FF00;  // Text color when the button is hovered over
     }
   }
   
