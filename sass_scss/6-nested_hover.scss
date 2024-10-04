@@ -1,13 +1,10 @@
-/* Button */
+// 6-nested_hover.scss
 
-$button-text-color-default: #FF0000;
-$button-text-color-hover: #00FF00;
-
-// Style button tags
 button {
-  color: $button-text-color-default; // Default text color
-
-  &:hover {
-    color: $button-text-color-hover; // Text color on hover
+    color: #FF0000;
+  
+    &:hover {
+      color: #00FF00;
+    }
   }
-  }
+  
