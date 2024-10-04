@@ -1,0 +1,15 @@
+/* Variables */
+$text-color: #3D3D3D;
+$backgroound-color: #6D6D6D;
+
+// Tags
+body{
+    color: $text-color;
+    background-color: $backgroound-color;
+}
+p{
+    color: $text-color;
+}
+h2{
+    background-color: $backgroound-color;
+}
