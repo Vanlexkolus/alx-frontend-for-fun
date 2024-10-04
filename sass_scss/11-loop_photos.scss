@@ -1,0 +1,14 @@
+// 11-loop_photos.scss
+
+// Import necessary file if there is any
+@import 'some_file'; // adjust this according to the actual file you need
+
+// All names
+$list-names: julien, john, sam, damian;
+
+// Loop through each name in the list
+@each $name in $list-names {
+  .photo-#{$name} {
+    background: image-url("photos/#{$name}.jpg") no-repeat;
+  }
+}

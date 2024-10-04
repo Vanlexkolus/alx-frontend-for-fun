@@ -1,0 +1,12 @@
+@mixin set-horizontal-margin($left-right-margin) {
+    margin-left: $left-right-margin;
+    margin-right: $left-right-margin;
+  }
+
+  body {
+    @include set-horizontal-margin(10px);
+  }
+  
+  div {
+    @include set-horizontal-margin(15px);
+  }
